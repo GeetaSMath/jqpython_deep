@@ -1,0 +1,35 @@
+
+>>> data = dict( parameters= [
+...         dict(name="PKG_TAG_NAME", value="trunk"),dict(name="GIT_COMMIT", value="master"),dict(name="TRIGGERED_JOB", value="trunk-buildall")],
+...         id="2013-12-27_00-09-37",changeSet=dict(items=[], kind="git"),)
+>>> import pyjq
+>>> pyjq.first('.parameters[] | {"param_name": .name, "param_type":.type}', data)
+---output-----
+{'param_name': 'PKG_TAG_NAME', 'param_type': None}
+
+>>> value = {"user":"stedolan","titles":["JQ Primer", "More JQ"]}
+>>> pyjq.all('{user, title: .titles[]}', value)
+----output----
+[{'user': 'stedolan', 'title': 'JQ Primer'}, {'user': 'stedolan', 'title': 'More JQ'}]
+
+>>> pyjq.all('{user, title: .titles[]} | select(.title == $title)', value, vars={"title": "More JQ"})
+----output----
+[{'user': 'stedolan', 'title': 'More JQ'}]
+
+>>> data = {"user":"stedolan","titles":["JQ Primer", "More JQ"]}
+>>> pyjq.first('{user, title: .titles[]}', data)
+----output-----
+{'user': 'stedolan', 'title': 'JQ Primer'}
+
+>>> data = {"user":"stedolan","titles": ["JQ Primer", "More JQ"]}
+>>> pyjq.one('.titles[] | select(test("P"))', data)
+----output-----
+'JQ Primer'
+
+
+>>> data = {"user":"stedolan","titles":["JQ Primer", "More JQ"]}
+>>> import pyjq
+>>> pat = pyjq.compile('{user, title: .titles[]}')
+>>> pat.all(data)
+----output----
+[{'user': 'stedolan', 'title': 'JQ Primer'}, {'user': 'stedolan', 'title': 'More JQ'}]
